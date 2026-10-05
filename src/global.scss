@@ -1,37 +1,54 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
-@import "@ionic/angular/css/core.css";
-
 /* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
-@import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
-@import "@ionic/angular/css/padding.css";
-@import "@ionic/angular/css/float-elements.css";
-@import "@ionic/angular/css/text-alignment.css";
-@import "@ionic/angular/css/text-transformation.css";
-@import "@ionic/angular/css/flex-utils.css";
+/* Global resets & typography */
+* {
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: auto;
+  min-height: 100vh;
+  background-color: #f2fbf6;
+  color: #111827;
+  overflow-x: hidden;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+app-root {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f2fbf6;
+}
+
+/* ─── DESKTOP: all page containers get sidebar offset ─── */
+@media (min-width: 769px) {
+  body {
+    background-color: #f0fdf4;
+  }
+
+  /* Push all main page content past the 220px sidebar */
+  .page-with-sidebar {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+    min-height: calc(100vh - 61px);
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-with-sidebar {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+}

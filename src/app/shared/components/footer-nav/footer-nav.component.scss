@@ -1,0 +1,121 @@
+/* ─── MOBILE BOTTOM NAV ─── */
+.footer-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  background-color: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0 max(12px, env(safe-area-inset-bottom)) 0;
+  z-index: 9999 !important;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-decoration: none;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    flex: 1;
+    padding: 4px 0;
+
+    .icon-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    &.active {
+      color: #043927;
+      .icon-wrapper { color: #043927; }
+      .nav-label    { font-weight: 700; }
+    }
+  }
+
+  @media (min-width: 769px) {
+    display: none !important;
+  }
+}
+
+/* ─── DESKTOP SIDEBAR NAV ─── */
+.desktop-sidebar {
+  display: none;
+
+  @media (min-width: 769px) {
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    background-color: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 20px 12px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 50;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
+    gap: 4px;
+    overflow-y: auto;
+    padding-top: 80px; /* below header */
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: #f0fdf4;
+        color: #043927;
+        border-color: #d1fae5;
+      }
+
+      &.active {
+        background-color: #e8f5ef;
+        color: #043927;
+        font-weight: 700;
+        border-color: #a7f3d0;
+        svg { color: #043927; }
+      }
+
+      svg {
+        flex-shrink: 0;
+        color: #9ca3af;
+        transition: color 0.2s;
+      }
+
+      &:hover svg { color: #043927; }
+    }
+  }
+
+  @media (min-width: 1024px) {
+    width: 240px;
+    padding: 80px 16px 20px;
+
+    .sidebar-item {
+      font-size: 14px;
+      padding: 13px 16px;
+    }
+  }
+}
