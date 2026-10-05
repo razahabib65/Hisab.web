@@ -1,0 +1,7 @@
+{
+  "name": "Hisab.web",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
