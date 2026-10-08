@@ -12,7 +12,7 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  public readonly phoneOrEmail = signal<string>('0300 1234567');
+  public readonly phoneOrEmail = signal<string>('');
   public readonly password = signal<string>('');
   public readonly showPassword = signal<boolean>(false);
   public readonly rememberShop = signal<boolean>(true);
@@ -30,7 +30,41 @@ export class LoginComponent {
   }
 
   public onLogin(): void {
-    this.authService.login(this.phoneOrEmail());
-    this.router.navigateByUrl('/dashboard');
+    if (!this.phoneOrEmail() || !this.password()) {
+      alert('Please enter your mobile/email and password.');
+      return;
+    }
+
+    this.authService.login(
+      this.phoneOrEmail(),
+      this.password()
+    ).subscribe({
+      next: (response: any) => {
+        console.log('LOGIN SUCCESS:', response);
+
+        // JWT token save
+        localStorage.setItem('token', response.token);
+
+        // User information save
+        if (response.userId) {
+          localStorage.setItem('userId', response.userId);
+        }
+
+        if (response.businessId) {
+          localStorage.setItem('businessId', response.businessId);
+        }
+
+        this.router.navigateByUrl('/dashboard');
+      },
+
+      error: (error) => {
+        console.error('LOGIN ERROR:', error);
+
+        alert(
+          error?.error?.message ||
+          'Login failed. Please check your credentials.'
+        );
+      },
+    });
   }
 }

@@ -1,42 +1,44 @@
 import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { UserAuth, ShopProfile } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+
+  private readonly apiUrl = environment.apiUrl
+
   private readonly authState = signal<UserAuth>({
-    isAuthenticated: true,
-    phoneOrEmail: '0300 1234567',
+    isAuthenticated: false,
+    phoneOrEmail: '',
     shopProfile: {
-      shopName: 'Madina General Store',
-      category: 'General Store / Karyana',
-      cityAddress: 'Shop #14, Main Bazaar, Lahore',
-      ownerName: 'Muhammad Raza',
-      phone: '300 1234567',
-      email: 'raza.madina@gmail.com',
+      shopName: '',
+      category: '',
+      cityAddress: '',
+      ownerName: '',
+      phone: '',
+      email: '',
     },
   });
 
   public readonly currentAuth = this.authState.asReadonly();
 
-  public login(phoneOrEmail: string): void {
-    this.authState.update((state) => ({
-      ...state,
-      isAuthenticated: true,
-      phoneOrEmail,
-    }));
+  constructor(private http: HttpClient) { }
+
+  register(formData: FormData) {
+    return this.http.post(`${this.apiUrl}/auth/register`, formData);
   }
 
-  public register(profile: ShopProfile): void {
-    this.authState.set({
-      isAuthenticated: true,
-      phoneOrEmail: profile.phone,
-      shopProfile: profile,
-    });
+  login(email: string, password: string) {
+    return this.http.post(
+      `${this.apiUrl}/auth/login`,
+      { email, password, }
+    );
   }
 
-  public logout(): void {
+  logout(): void {
     this.authState.update((state) => ({
       ...state,
       isAuthenticated: false,

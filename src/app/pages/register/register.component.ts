@@ -44,19 +44,51 @@ export class RegisterComponent {
   }
 
   public onRegister(): void {
-    if (!this.shopName() || !this.ownerName() || !this.mobileNumber() || !this.password()) {
+    if (
+      !this.shopName() ||
+      !this.ownerName() ||
+      !this.mobileNumber() ||
+      !this.password() ||
+      !this.confirmPassword() ||
+      !this.agreeTerms()
+    ) {
+      alert('Please fill all required fields.');
       return;
     }
 
-    this.authService.register({
-      shopName: this.shopName(),
-      category: this.selectedCategory(),
-      cityAddress: this.cityAddress(),
-      ownerName: this.ownerName(),
-      phone: `0${this.mobileNumber()}`,
-      email: this.emailAddress() || undefined,
-    });
+    if (this.password() !== this.confirmPassword()) {
+      alert('Passwords do not match.');
+      return;
+    }
 
-    this.router.navigateByUrl('/dashboard');
+    const formData = new FormData();
+
+    formData.append('BusinessName', this.shopName());
+    formData.append('BusinessType', this.selectedCategory());
+    formData.append('Address', this.cityAddress());
+    formData.append('OwnerName', this.ownerName());
+    formData.append('Phone', `0${this.mobileNumber()}`);
+    formData.append('Email', this.emailAddress());
+    formData.append('Password', this.password());
+    formData.append('ConfirmPassword', this.confirmPassword());
+
+    console.log('Calling Register API...');
+
+    this.authService.register(formData).subscribe({
+      next: (response) => {
+        console.log('REGISTER SUCCESS:', response);
+
+        this.router.navigateByUrl('/login');
+      },
+
+      error: (error) => {
+        console.error('REGISTER ERROR:', error);
+
+        alert(
+          error?.error?.message ||
+          'Registration failed. Please check your information.'
+        );
+      },
+    });
   }
 }

@@ -1,0 +1,40 @@
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import {
+  ToastService,
+  ToastType,
+} from '../../core/services/toast.service';
+
+@Component({
+  selector: 'app-toast',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './toast.component.html',
+  styleUrls: ['./toast.component.scss'],
+})
+export class ToastComponent {
+
+  public readonly toastService =
+    inject(ToastService);
+
+  public getIcon(type: ToastType): string {
+
+    switch (type) {
+
+      case 'success':
+        return '✓';
+
+      case 'error':
+        return '×';
+
+      case 'warning':
+        return '!';
+
+      default:
+        return 'i';
+    }
+
+  }
+
+}

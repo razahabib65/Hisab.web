@@ -1,0 +1,34 @@
+<div class="toast-container">
+
+  @for (toast of toastService.toasts(); track toast.id) {
+
+  <div class="toast" [class.success]="toast.type === 'success'" [class.error]="toast.type === 'error'"
+    [class.warning]="toast.type === 'warning'" [class.info]="toast.type === 'info'">
+
+    <div class="toast-icon">
+      {{ getIcon(toast.type) }}
+    </div>
+
+    <div class="toast-content">
+
+      <strong>
+        {{ toast.title }}
+      </strong>
+
+      <span>
+        {{ toast.message }}
+      </span>
+
+    </div>
+
+    <button type="button" class="toast-close" (click)="toastService.remove(toast.id)">
+
+      ×
+
+    </button>
+
+  </div>
+
+  }
+
+</div>

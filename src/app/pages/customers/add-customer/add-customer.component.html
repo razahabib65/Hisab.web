@@ -1,145 +1,317 @@
-<app-header pageTitle="Add Customer" [showBackButton]="true" backUrl="/customers"></app-header>
+<app-header [pageTitle]="isEditMode() ? 'Edit Customer' : 'Add Customer'" [showBackButton]="true" backUrl="/customers">
+</app-header>
+
 
 <div class="add-customer-container">
+
   <form (ngSubmit)="onSubmit()">
+
+
+    <!-- Loading -->
+    @if (isLoading()) {
+
+    <div class="loading-state">
+
+      <div class="loading-spinner"></div>
+
+      <span>
+        Loading customer...
+      </span>
+
+    </div>
+
+    }
+
+
+    @if (!isLoading()) {
+
 
     <!-- Avatar Row -->
     <div class="avatar-row">
+
       <div class="avatar-circle">
-        <span>{{ previewInitials() || 'AB' }}</span>
+
+        <span>
+          {{ previewInitials() || 'AB' }}
+        </span>
+
       </div>
+
       <div class="avatar-info">
-        <span class="avatar-label">Customer Initials</span>
-        <span class="avatar-sub">Auto-generated from name</span>
+
+        <span class="avatar-label">
+          Customer Initials
+        </span>
+
+        <span class="avatar-sub">
+          Auto-generated from name
+        </span>
+
       </div>
+
     </div>
 
-    <!-- Name Field -->
+
+    <!-- Name -->
     <div class="form-group">
-      <label>Full Name <span class="required">*</span></label>
-      <div class="input-box">
-        <svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-        <input
-          type="text"
-          [ngModel]="name()"
-          (ngModelChange)="name.set($event)"
-          name="name"
-          placeholder="e.g. Ahmed Khan"
-          required
-        />
-      </div>
-    </div>
 
-    <!-- Phone Field -->
-    <div class="form-group">
-      <label>Mobile Number <span class="required">*</span></label>
-      <div class="input-box">
-        <span class="prefix">+92</span>
-        <input
-          type="text"
-          [ngModel]="phone()"
-          (ngModelChange)="phone.set($event)"
-          name="phone"
-          placeholder="300 1234567"
-          required
-        />
-      </div>
-    </div>
-
-    <!-- Opening Balance Toggle -->
-    <div class="toggle-row">
-      <div class="toggle-left">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#059669" stroke-width="2">
-          <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
-          <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
-          <path d="M18 12a2 2 0 0 0 0 4h4v-4z"></path>
-        </svg>
-        <div>
-          <span class="toggle-title">Opening Balance</span>
-          <span class="toggle-sub">Add existing udhaar</span>
-        </div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" [checked]="enableOpeningBalance()" (change)="toggleOpeningBalance()" />
-        <span class="slider"></span>
+      <label>
+        Full Name
+        <span class="required">*</span>
       </label>
+
+      <div class="input-box">
+
+        <svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2">
+          </path>
+
+          <circle cx="12" cy="7" r="4">
+          </circle>
+
+        </svg>
+
+        <input type="text" [ngModel]="name()" (ngModelChange)="name.set($event)" name="name"
+          placeholder="e.g. Ahmed Khan" required />
+
+      </div>
+
     </div>
+
+
+    <!-- Phone -->
+    <div class="form-group">
+
+      <label>
+        Mobile Number
+        <span class="required">*</span>
+      </label>
+
+      <div class="input-box">
+
+        <span class="prefix">
+          +92
+        </span>
+
+        <input type="text" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone"
+          placeholder="300 1234567" required />
+
+      </div>
+
+    </div>
+
+
+    <!-- Opening Balance -->
+    <div class="toggle-row">
+
+      <div class="toggle-left">
+
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#059669" stroke-width="2">
+
+          <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4">
+          </path>
+
+          <path d="M3 5v14a2 2 0 0 0 2 2h16v-5">
+          </path>
+
+          <path d="M18 12a2 2 0 0 0 0 4h4v-4z">
+          </path>
+
+        </svg>
+
+        <div>
+
+          <span class="toggle-title">
+            Opening Balance
+          </span>
+
+          <span class="toggle-sub">
+            Add existing udhaar
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <label class="switch">
+
+        <input type="checkbox" [checked]="enableOpeningBalance()" (change)="toggleOpeningBalance()" />
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
 
     @if (enableOpeningBalance()) {
-      <div class="form-group">
-        <label>Amount (Rs.)</label>
-        <div class="input-box">
-          <span class="prefix">Rs.</span>
-          <input
-            type="number"
-            [ngModel]="openingBalance()"
-            (ngModelChange)="openingBalance.set(+$event)"
-            name="openingBalance"
-            placeholder="0"
-          />
-        </div>
+
+    <div class="form-group">
+
+      <label>
+        Amount (Rs.)
+      </label>
+
+      <div class="input-box">
+
+        <span class="prefix">
+          Rs.
+        </span>
+
+        <input type="number" [ngModel]="openingBalance()" (ngModelChange)="openingBalance.set(+$event)"
+          name="openingBalance" placeholder="0" />
+
       </div>
+
+    </div>
+
     }
 
-    <!-- Address Field -->
+
+    <!-- Address -->
     <div class="form-group">
-      <label>Address <span class="optional">Optional</span></label>
+
+      <label>
+        Address
+        <span class="optional">
+          Optional
+        </span>
+      </label>
+
       <div class="input-box">
+
         <svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
+
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z">
+          </path>
+
+          <circle cx="12" cy="10" r="3">
+          </circle>
+
         </svg>
-        <input
-          type="text"
-          [ngModel]="address()"
-          (ngModelChange)="address.set($event)"
-          name="address"
-          placeholder="Shop / Area"
-        />
+
+        <input type="text" [ngModel]="address()" (ngModelChange)="address.set($event)" name="address"
+          placeholder="Shop / Area" />
+
       </div>
+
     </div>
 
-    <!-- Notes Field -->
+
+    <!-- Notes -->
     <div class="form-group">
-      <label>Notes <span class="optional">Optional</span></label>
+
+      <label>
+        Notes
+        <span class="optional">
+          Optional
+        </span>
+      </label>
+
       <div class="input-box textarea-box">
-        <textarea
-          [ngModel]="notes()"
-          (ngModelChange)="notes.set($event)"
-          name="notes"
-          rows="2"
-          placeholder="Any notes about this customer..."
-        ></textarea>
+
+        <textarea [ngModel]="notes()" (ngModelChange)="notes.set($event)" name="notes" rows="2"
+          placeholder="Any notes about this customer..."></textarea>
+
       </div>
+
     </div>
 
-    <!-- Preview Card -->
+
+    <!-- Preview -->
     <div class="preview-card" [class.has-data]="name()">
-      <div class="preview-avatar">{{ previewInitials() || 'AB' }}</div>
+
+      <div class="preview-avatar">
+        {{ previewInitials() || 'AB' }}
+      </div>
+
       <div class="preview-info">
-        <strong>{{ name() || 'Customer Name' }}</strong>
-        <span>{{ phone() ? ('+92 ' + phone()) : 'No phone added' }}</span>
+
+        <strong>
+          {{ name() || 'Customer Name' }}
+        </strong>
+
+        <span>
+          {{
+          phone()
+          ? ('+92 ' + phone())
+          : 'No phone added'
+          }}
+        </span>
+
       </div>
+
       <div class="preview-balance">
-        <span>Udhaar</span>
-        <strong>Rs. {{ (enableOpeningBalance() ? openingBalance() : 0) | number:'1.0-0' }}</strong>
+
+        <span>
+          Udhaar
+        </span>
+
+        <strong>
+          Rs.
+          {{
+          (
+          enableOpeningBalance()
+          ? openingBalance()
+          : 0
+          ) | number:'1.0-0'
+          }}
+        </strong>
+
       </div>
+
     </div>
 
-    <!-- Save Button -->
-    <button type="submit" class="save-btn" [disabled]="!name().trim() || !phone().trim()">
+
+    <!-- Submit -->
+    <button type="submit" class="save-btn" [disabled]="
+          !name().trim() ||
+          !phone().trim() ||
+          isSaving()
+        ">
+
+      @if (isSaving()) {
+
+      <span>
+        Saving...
+      </span>
+
+      } @else {
+
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
-        <polyline points="20 6 9 17 4 12"></polyline>
+
+        <polyline points="20 6 9 17 4 12">
+        </polyline>
+
       </svg>
-      Save Customer
+
+      <span>
+        {{ isEditMode()
+        ? 'Update Customer'
+        : 'Save Customer'
+        }}
+      </span>
+
+      }
+
     </button>
 
-    <button type="button" class="discard-btn" (click)="onDiscard()">Cancel</button>
+
+    <!-- Cancel -->
+    <button type="button" class="discard-btn" (click)="onDiscard()">
+
+      Cancel
+
+    </button>
+
+    }
 
   </form>
+
 </div>
 
-<app-footer-nav activeTab="customers"></app-footer-nav>
+
+<app-footer-nav activeTab="customers">
+</app-footer-nav>
