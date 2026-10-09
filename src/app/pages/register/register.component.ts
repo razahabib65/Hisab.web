@@ -67,7 +67,7 @@ export class RegisterComponent {
     formData.append('BusinessType', this.selectedCategory());
     formData.append('Address', this.cityAddress());
     formData.append('OwnerName', this.ownerName());
-    formData.append('Phone', `0${this.mobileNumber()}`);
+    formData.append('Phone', this.mobileNumber());
     formData.append('Email', this.emailAddress());
     formData.append('Password', this.password());
     formData.append('ConfirmPassword', this.confirmPassword());

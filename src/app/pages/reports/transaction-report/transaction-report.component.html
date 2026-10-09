@@ -1,0 +1,140 @@
+<app-header></app-header>
+
+<main class="rp-page">
+
+  <!-- ── PAGE HERO / FILTER BAR ─────────────────── -->
+  <div class="rp-hero">
+    <div class="rp-hero__text">
+      <h1>Transaction Report</h1>
+      <p>View all credits &amp; debits by date range</p>
+    </div>
+
+    <div class="rp-filters">
+      <div class="rp-filter-group">
+        <label>From</label>
+        <input type="date"
+          [ngModel]="fromDate()"
+          (ngModelChange)="fromDate.set($event); loadData()" />
+      </div>
+      <span class="rp-filter-sep">→</span>
+      <div class="rp-filter-group">
+        <label>To</label>
+        <input type="date"
+          [ngModel]="toDate()"
+          (ngModelChange)="toDate.set($event); loadData()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOADING ──────────────────────────────────── -->
+  @if (isLoading()) {
+    <div class="rp-state">
+      <div class="rp-spinner"></div>
+      <span>Loading…</span>
+    </div>
+  }
+
+  <!-- ── ERROR ────────────────────────────────────── -->
+  @else if (error()) {
+    <div class="rp-state rp-state--error">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>{{ error() }}</span>
+      <button (click)="loadData()">Try Again</button>
+    </div>
+  }
+
+  <!-- ── DATA ─────────────────────────────────────── -->
+  @else if (report()) {
+
+    <!-- Summary Cards -->
+    <div class="rp-summary">
+
+      <div class="rp-card rp-card--green">
+        <div class="rp-card__icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="rp-card__body">
+          <span class="rp-card__label">Total Received</span>
+          <span class="rp-card__value">Rs {{ report()!.totalReceived | number }}</span>
+        </div>
+      </div>
+
+      <div class="rp-card rp-card--red">
+        <div class="rp-card__icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
+          </svg>
+        </div>
+        <div class="rp-card__body">
+          <span class="rp-card__label">Total Udhaar</span>
+          <span class="rp-card__value">Rs {{ report()!.totalUdhaarGiven | number }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Transaction List -->
+    <div class="rp-list-header">
+      <span class="rp-list-title">Transactions</span>
+      <span class="rp-badge">{{ report()!.totalTransactions }}</span>
+    </div>
+
+    <div class="rp-list">
+
+      @for (tx of report()!.transactions; track tx.transactionId) {
+        <div class="rp-tx">
+
+          <div class="rp-tx__avatar"
+            [class.rp-tx__avatar--green]="tx.type === 'Payment'"
+            [class.rp-tx__avatar--red]="tx.type === 'Udhaar'">
+            {{ tx.customerName.charAt(0).toUpperCase() }}
+          </div>
+
+          <div class="rp-tx__info">
+            <span class="rp-tx__name">{{ tx.customerName }}</span>
+            <span class="rp-tx__sub">{{ tx.phone }}
+              @if (tx.address) { · {{ tx.address }} }
+            </span>
+            @if (tx.description) {
+              <span class="rp-tx__desc">{{ tx.description }}</span>
+            }
+          </div>
+
+          <div class="rp-tx__meta">
+            <span class="rp-tx__amount"
+              [class.rp-tx__amount--green]="tx.type === 'Payment'"
+              [class.rp-tx__amount--red]="tx.type === 'Udhaar'">
+              Rs {{ tx.amount | number }}
+            </span>
+            <span class="rp-tx__type"
+              [class.rp-tx__type--green]="tx.type === 'Payment'"
+              [class.rp-tx__type--red]="tx.type === 'Udhaar'">
+              {{ tx.type === 'Payment' ? 'Received' : 'Udhaar' }}
+            </span>
+            <span class="rp-tx__date">{{ tx.date | date:'dd MMM' }}</span>
+          </div>
+
+        </div>
+      } @empty {
+        <div class="rp-state rp-state--empty">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span>No transactions for this period</span>
+        </div>
+      }
+
+    </div>
+
+  }
+
+</main>
+
+<app-footer-nav></app-footer-nav>

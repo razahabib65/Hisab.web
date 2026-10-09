@@ -69,7 +69,7 @@
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
     gap: 4px;
     overflow-y: auto;
-    padding-top: 80px; /* below header */
+    padding-top: 61px; /* exact header height */
 
     .sidebar-item {
       display: flex;
@@ -111,7 +111,7 @@
 
   @media (min-width: 1024px) {
     width: 240px;
-    padding: 80px 16px 20px;
+    padding: 61px 16px 20px;
 
     .sidebar-item {
       font-size: 14px;

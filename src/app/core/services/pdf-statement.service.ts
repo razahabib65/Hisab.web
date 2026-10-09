@@ -7,97 +7,141 @@ import autoTable from 'jspdf-autotable';
 })
 export class PdfStatementService {
 
-  public generateStatement(customer: any, transactions: any[]): void {
+  public generateStatement(business: any, customer: any, transactions: any[]): void {
+    this.loadImageAsBase64('assets/hisab logo.png').then(logoBase64 => {
+      this.buildPdf(logoBase64, business, customer, transactions);
+    }).catch(() => {
+      this.buildPdf(null, business, customer, transactions);
+    });
+  }
+
+  // ─────────────────────────────────────────
+  // IMAGE LOADER
+  // ─────────────────────────────────────────
+
+  private loadImageAsBase64(src: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) { reject('no ctx'); return; }
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = () => reject('load error');
+      img.src = src;
+    });
+  }
+
+  // ─────────────────────────────────────────
+  // PDF BUILDER
+  // ─────────────────────────────────────────
+
+  private buildPdf(logoBase64: string | null, business: any, customer: any, transactions: any[]): void {
     const doc = new jsPDF();
 
-    // ==========================================
-    // COLORS & FONTS SETUP
-    // ==========================================
-    const primaryGreen: [number, number, number] = [4, 57, 39]; // #043927 Hisab Green
-    const redAccent: [number, number, number] = [220, 38, 38]; // Udhaar Red
-    const greenAccent: [number, number, number] = [5, 150, 105]; // Payment Green
-    const textGray: [number, number, number] = [107, 114, 128]; // #6B7280
+    const primaryGreen: [number, number, number] = [4, 57, 39];
+    const redAccent: [number, number, number] = [220, 38, 38];
+    const greenAccent: [number, number, number] = [5, 150, 105];
+    const textGray: [number, number, number] = [107, 114, 128];
 
-    // HEADER SECTION
+    // ─── HEADER BANNER ───────────────────────
     doc.setFillColor(...primaryGreen);
-    doc.rect(0, 0, 210, 40, 'F'); // Top banner (A4 width is 210)
+    doc.rect(0, 0, 210, 40, 'F');
 
+    // Logo image (left side in banner)
+    if (logoBase64) {
+      doc.addImage(logoBase64, 'PNG', 10, 6, 28, 28);
+    }
+
+    // App name next to logo
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
+    doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text('Hisaab', 14, 25);
-    
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Smart POS & Ledger App', 14, 32);
+    doc.text('Hisab', logoBase64 ? 42 : 14, 22);
 
-    // STATIC BUSINESS PLACEHOLDER
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Your Business Name Here', 210 - 14, 20, { align: 'right' });
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Phone: 0+XX XXXXXXXX', 210 - 14, 26, { align: 'right' });
-    doc.text('Address: Business Tagline/Address', 210 - 14, 32, { align: 'right' });
+    doc.text('Smart POS & Ledger', logoBase64 ? 42 : 14, 29);
 
-    // ==========================================
-    // CUSTOMER DETAILS
-    // ==========================================
-    doc.setTextColor(17, 24, 39); // #111827 Dark gray
-    doc.setFontSize(14);
+    // Business info (right side of banner)
+    const bName = business?.businessName || '';
+    if (bName) {
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text(bName, 196, 18, { align: 'right' });
+    }
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    let byPos = bName ? 24 : 18;
+    if (business?.phone) {
+      doc.text(`Phone: ${business.phone}`, 196, byPos, { align: 'right' });
+      byPos += 5;
+    }
+    if (business?.address) {
+      doc.text(`${business.address}`, 196, byPos, { align: 'right' });
+    }
+
+    // ─── CUSTOMER DETAILS ────────────────────
+    doc.setTextColor(17, 24, 39);
+    doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
     doc.text('Customer Statement', 14, 52);
 
     const reportDate = new Date().toLocaleDateString('en-PK', { dateStyle: 'medium' });
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Date of Issue: ${reportDate}`, 210 - 14, 52, { align: 'right' });
+    doc.setTextColor(...textGray);
+    doc.text(`Date: ${reportDate}`, 196, 52, { align: 'right' });
+
+    doc.setTextColor(17, 24, 39);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Name:', 14, 60);
+    doc.setFont('helvetica', 'normal');
+    doc.text(customer.name, 32, 60);
 
     doc.setFont('helvetica', 'bold');
-    doc.text(`Name:`, 14, 60);
+    doc.text('Phone:', 14, 66);
     doc.setFont('helvetica', 'normal');
-    doc.text(customer.name, 30, 60);
-    
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Phone:`, 14, 66);
-    doc.setFont('helvetica', 'normal');
-    doc.text(customer.phone, 30, 66);
+    doc.text(customer.phone, 32, 66);
 
     if (customer.address) {
       doc.setFont('helvetica', 'bold');
-      doc.text(`Address:`, 14, 72);
+      doc.text('Address:', 14, 72);
       doc.setFont('helvetica', 'normal');
-      doc.text(customer.address, 32, 72);
+      doc.text(customer.address, 34, 72);
     }
 
-    // ==========================================
-    // BALANCE SUMMARY BOX (COMPACT)
-    // ==========================================
-    const yBalance = 78;
+    // ─── BALANCE SUMMARY BOX ─────────────────
+    const yBalance = customer.address ? 78 : 72;
     doc.setFillColor(243, 244, 246);
     doc.setDrawColor(209, 213, 219);
-    doc.rect(14, yBalance, 182, 22, 'FD'); // single compact box
+    doc.rect(14, yBalance, 182, 22, 'FD');
 
     doc.setTextColor(...textGray);
-    doc.setFontSize(9);
-    doc.text('Udhaar Given', 44, yBalance + 8, { align: 'center' });
-    doc.text('Payments Received', 105, yBalance + 8, { align: 'center' });
-    doc.text('Net Balance Remaining', 166, yBalance + 8, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Udhaar Given',      44, yBalance + 7, { align: 'center' });
+    doc.text('Payments Received', 105, yBalance + 7, { align: 'center' });
+    doc.text('Net Balance',       166, yBalance + 7, { align: 'center' });
 
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...redAccent);
-    doc.text(`Rs. ${customer.totalUdhaar.toLocaleString()}`, 44, yBalance + 16, { align: 'center' });
-    
-    doc.setTextColor(...greenAccent);
-    doc.text(`Rs. ${customer.totalReceived.toLocaleString()}`, 105, yBalance + 16, { align: 'center' });
-    
-    doc.setTextColor(...primaryGreen);
-    doc.text(`Rs. ${customer.netBalance.toLocaleString()}`, 166, yBalance + 16, { align: 'center' });
 
-    // ==========================================
-    // TRANSACTIONS TABLE
-    // ==========================================
+    doc.setTextColor(...redAccent);
+    doc.text(`Rs. ${(customer.totalUdhaar ?? 0).toLocaleString()}`, 44, yBalance + 16, { align: 'center' });
+
+    doc.setTextColor(...greenAccent);
+    doc.text(`Rs. ${(customer.totalReceived ?? 0).toLocaleString()}`, 105, yBalance + 16, { align: 'center' });
+
+    doc.setTextColor(...primaryGreen);
+    doc.text(`Rs. ${(customer.netBalance ?? 0).toLocaleString()}`, 166, yBalance + 16, { align: 'center' });
+
+    // ─── TRANSACTIONS TABLE ───────────────────
     const tableData = transactions.map(tx => [
       tx.timestamp,
       tx.title,
@@ -107,47 +151,46 @@ export class PdfStatementService {
     ]);
 
     autoTable(doc, {
-      startY: yBalance + 28,
+      startY: yBalance + 30,
       head: [['Date / Time', 'Type', 'Notes', 'Udhaar (-)', 'Payment (+)']],
       body: tableData,
       theme: 'grid',
       headStyles: {
-        fillColor: primaryGreen, 
-        textColor: 255, 
+        fillColor: primaryGreen,
+        textColor: 255,
         fontStyle: 'bold',
         fontSize: 9,
         halign: 'left'
       },
       styles: {
-        fontSize: 9,
-        cellPadding: 4.5,
+        fontSize: 8.5,
+        cellPadding: 4,
         textColor: [55, 65, 81],
         lineColor: [209, 213, 219],
         lineWidth: 0.1,
+        overflow: 'linebreak',
       },
       columnStyles: {
-        0: { cellWidth: 38 },
-        1: { cellWidth: 34 },
+        0: { cellWidth: 36 },
+        1: { cellWidth: 30 },
         2: { cellWidth: 'auto' },
-        3: { textColor: redAccent, fontStyle: 'bold', halign: 'right' },
-        4: { textColor: greenAccent, fontStyle: 'bold', halign: 'right' }
+        3: { textColor: redAccent,   fontStyle: 'bold', halign: 'right', cellWidth: 28 },
+        4: { textColor: greenAccent, fontStyle: 'bold', halign: 'right', cellWidth: 28 }
       },
       didParseCell: (data) => {
-        // Force right alignment for amounts in header too
         if (data.section === 'head' && (data.column.index === 3 || data.column.index === 4)) {
           data.cell.styles.halign = 'right';
         }
       },
       didDrawPage: (data) => {
-        // Footer pagination
-        const str = 'Page ' + data.pageNumber;
+        const str = `Page ${data.pageNumber}`;
         doc.setFontSize(8);
         doc.setTextColor(...textGray);
-        doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+        doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 8);
       }
     });
 
-    // Save PDF
-    doc.save(`Hisaab_Statement_${customer.name.replace(/\s+/g, '_')}_${reportDate}.pdf`);
+    doc.save(`Hisab_Statement_${customer.name.replace(/\s+/g, '_')}_${reportDate}.pdf`);
   }
 }
+

@@ -333,7 +333,7 @@
 
     <!-- CASHBOOK -->
 
-    <div class="grid-card">
+    <div class="grid-card" routerLink="/reports/transactions">
 
       <div class="card-icon amber-bg">
 
@@ -363,7 +363,7 @@
 
     <!-- REPORTS -->
 
-    <div class="grid-card">
+    <div class="grid-card" routerLink="/reports/transactions">
 
       <div class="card-icon blue-bg">
 
@@ -458,35 +458,22 @@
     @if (recentActivities().length === 0) {
 
     <div class="empty-activity">
-
-      <div class="empty-icon">
-
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
-
-          <path d="M6 2h9l5 5v15H6z">
-          </path>
-
-          <path d="M14 2v6h6">
-          </path>
-
-          <line x1="9" y1="13" x2="17" y2="13">
-          </line>
-
-          <line x1="9" y1="17" x2="15" y2="17">
-          </line>
-
+      <div class="empty-graphic">
+        <svg viewBox="0 0 64 64" width="64" height="64" fill="none">
+          <rect x="8" y="4" width="40" height="52" rx="4" fill="#e8f5ef" stroke="#a7f3d0" stroke-width="2"/>
+          <line x1="18" y1="18" x2="38" y2="18" stroke="#6ee7b7" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="18" y1="26" x2="38" y2="26" stroke="#6ee7b7" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="18" y1="34" x2="28" y2="34" stroke="#a7f3d0" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="48" cy="48" r="12" fill="#043927"/>
+          <line x1="48" y1="43" x2="48" y2="53" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="43" y1="48" x2="53" y2="48" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
         </svg>
-
       </div>
-
-      <strong>
-        No recent transactions
-      </strong>
-
-      <span>
-        Your latest ledger activity will appear here.
-      </span>
-
+      <strong>No transactions yet</strong>
+      <span>Your ledger is clean. Add a customer<br>and record your first Udhaar or payment.</span>
+      <button type="button" class="empty-cta" (click)="navigateToAddUdhaar()">
+        + Record First Transaction
+      </button>
     </div>
 
     }

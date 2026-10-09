@@ -19,6 +19,7 @@ import { FooterNavComponent } from '../../../shared/components/footer-nav/footer
 
 import { CustomerService } from '../../../core/services/customer.service';
 import { PdfStatementService } from '../../../core/services/pdf-statement.service';
+import { BusinessService } from '../../../core/services/business.service';
 
 interface DetailCustomer {
   id: string;
@@ -161,6 +162,9 @@ export class CustomerDetailComponent implements OnInit {
 
   private readonly pdfStatementService = 
     inject(PdfStatementService);
+
+  private readonly businessService =
+    inject(BusinessService);
 
   // =========================
   // INIT
@@ -437,10 +441,17 @@ export class CustomerDetailComponent implements OnInit {
 
   public downloadStatement(): void {
     const cust = this.customer();
-    const txs = this.transactions(); // we can use filtered transactions or allCustomerTransactions(). The user probably wants filtered or all. The user requested transaction ledger. Let's use `allCustomerTransactions()` so it generates full history regardless of active filter.
+    const txs = this.allCustomerTransactions(); 
     if (!cust) return;
 
-    this.pdfStatementService.generateStatement(cust, this.allCustomerTransactions());
+    this.businessService.loadBusiness().subscribe({
+      next: (biz) => {
+        this.pdfStatementService.generateStatement(biz, cust, txs);
+      },
+      error: () => {
+        this.pdfStatementService.generateStatement(null, cust, txs);
+      }
+    });
   }
 
   // =========================

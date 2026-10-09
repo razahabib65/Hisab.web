@@ -425,6 +425,51 @@
         }
       }
     }
+    .empty-activity {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1.5px dashed #a7f3d0;
+      gap: 0.5rem;
+
+      .empty-graphic {
+        margin-bottom: 0.5rem;
+        opacity: 0.9;
+      }
+
+      strong {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #043927;
+      }
+
+      span {
+        font-size: 0.8rem;
+        color: #6b7280;
+        line-height: 1.5;
+      }
+
+      .empty-cta {
+        margin-top: 0.75rem;
+        padding: 0.5rem 1.25rem;
+        background: #043927;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover { background: #065f46; }
+      }
+    }
   }
 }
 
