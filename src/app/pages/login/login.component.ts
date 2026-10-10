@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -17,9 +18,11 @@ export class LoginComponent {
   public readonly showPassword = signal<boolean>(false);
   public readonly rememberShop = signal<boolean>(true);
   public readonly selectedLanguage = signal<'en' | 'ur'>('en');
+  public readonly isLoading = signal<boolean>(false);
 
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   public togglePasswordVisibility(): void {
     this.showPassword.update((val) => !val);
@@ -31,10 +34,11 @@ export class LoginComponent {
 
   public onLogin(): void {
     if (!this.phoneOrEmail() || !this.password()) {
-      alert('Please enter your mobile/email and password.');
+      this.toastService.warning('Missing Fields', 'Please enter your mobile/email and password.');
       return;
     }
 
+    this.isLoading.set(true);
     this.authService.login(
       this.phoneOrEmail(),
       this.password()
@@ -54,15 +58,16 @@ export class LoginComponent {
           localStorage.setItem('businessId', response.businessId);
         }
 
+        this.isLoading.set(false);
         this.router.navigateByUrl('/dashboard');
       },
 
       error: (error) => {
         console.error('LOGIN ERROR:', error);
-
-        alert(
-          error?.error?.message ||
-          'Login failed. Please check your credentials.'
+        this.isLoading.set(false);
+        this.toastService.error(
+          'Login Failed',
+          error?.error?.message || 'Please check your credentials and try again.'
         );
       },
     });

@@ -2,14 +2,14 @@
   min-height: 100vh;
   background-color: #f2fbf6;
   width: 100%;
-  padding: 77px 16px 90px 16px; /* 61px header + 16px gap */
+  padding: calc(77px + env(safe-area-inset-top)) 16px 90px 16px; /* 61px header + 16px gap + safe area */
   box-sizing: border-box;
 
   /* ── DESKTOP: push content past sidebar, fill remaining width ── */
   @media (min-width: 769px) {
     margin-left: 220px;
     width: calc(100% - 220px);
-    padding: 89px 32px 40px 32px; /* 61px header + 28px gap */
+    padding: calc(89px + env(safe-area-inset-top)) 32px 40px 32px; /* 61px header + 28px gap + safe area */
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
@@ -27,6 +27,32 @@
   @media (min-width: 1440px) {
     padding: 101px 64px 40px 64px;
     gap: 0 48px;
+  }
+
+  /* ── DASHBOARD LOADING ── */
+  .dashboard-loading {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 12px;
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(4, 57, 39, 0.1);
+      border-top-color: #043927;
+      border-radius: 50%;
+      animation: dashSpin 0.8s linear infinite;
+    }
+
+    span {
+      font-size: 13px;
+      font-weight: 600;
+      color: #043927;
+    }
   }
 
   /* ── LEDGER CARD ── */

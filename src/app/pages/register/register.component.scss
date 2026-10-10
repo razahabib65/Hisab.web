@@ -14,7 +14,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 40px 20px 60px;
+    /* Push content below Android status bar on mobile */
+    padding: calc(40px + env(safe-area-inset-top)) 20px 60px;
     box-sizing: border-box;
     min-height: 100vh;
 
@@ -217,6 +218,21 @@
 
     &:hover { opacity: 0.92; transform: translateY(-1px); }
     &:active { transform: translateY(0); }
+    
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: translateY(0);
+    }
+    
+    .btn-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
   }
 
   .login-row {
@@ -374,4 +390,8 @@
       form { max-width: 600px; }
     }
   }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

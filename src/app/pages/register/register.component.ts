@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -22,9 +23,11 @@ export class RegisterComponent {
   public readonly confirmPassword = signal<string>('');
   public readonly agreeTerms = signal<boolean>(false);
   public readonly showPassword = signal<boolean>(false);
+  public readonly isLoading = signal<boolean>(false);
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   public readonly categories = [
     'General Store / Karyana',
@@ -52,14 +55,16 @@ export class RegisterComponent {
       !this.confirmPassword() ||
       !this.agreeTerms()
     ) {
-      alert('Please fill all required fields.');
+      this.toastService.warning('Missing Fields', 'Please fill all required fields and agree to Terms.');
       return;
     }
 
     if (this.password() !== this.confirmPassword()) {
-      alert('Passwords do not match.');
+      this.toastService.warning('Password Mismatch', 'Passwords do not match. Please try again.');
       return;
     }
+
+    this.isLoading.set(true);
 
     const formData = new FormData();
 
@@ -77,18 +82,19 @@ export class RegisterComponent {
     this.authService.register(formData).subscribe({
       next: (response) => {
         console.log('REGISTER SUCCESS:', response);
-
+        this.isLoading.set(false);
         this.router.navigateByUrl('/login');
       },
 
       error: (error) => {
         console.error('REGISTER ERROR:', error);
-
-        alert(
-          error?.error?.message ||
-          'Registration failed. Please check your information.'
+        this.isLoading.set(false);
+        this.toastService.error(
+          'Registration Failed',
+          error?.error?.message || 'Please check your information and try again.'
         );
       },
     });
   }
 }
+

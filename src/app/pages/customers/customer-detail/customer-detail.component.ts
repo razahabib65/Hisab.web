@@ -438,6 +438,23 @@ export class CustomerDetailComponent implements OnInit {
   // =========================
   // DOWNLOAD STATEMENT
   // =========================
+  // ACTIONS
+  // =========================
+
+  public sendReminderSms(cust: DetailCustomer): void {
+    if (!cust.phone) return;
+
+    const amount = cust.netBalance;
+    // Format amount with commas
+    const formattedAmount = amount.toLocaleString('en-IN');
+    
+    // Construct the Urdu message
+    const message = `معزز صارف، آپ کے ledger میں Rs. ${formattedAmount} کی رقم واجب الادا ہے۔ براہ کرم ادائیگی یقینی بنائیں۔ آپ کے تعاون کا بے حد شکریہ۔\n- Hisab.com`;
+    
+    // Use the native sms: intent
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`sms:${cust.phone}?body=${encodedMessage}`, '_self');
+  }
 
   public downloadStatement(): void {
     const cust = this.customer();

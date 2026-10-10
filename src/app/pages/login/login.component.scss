@@ -14,7 +14,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 40px 20px 40px;
+    /* Push content below Android status bar on mobile */
+    padding: calc(40px + env(safe-area-inset-top)) 20px 40px;
     box-sizing: border-box;
     min-height: 100vh;
   }

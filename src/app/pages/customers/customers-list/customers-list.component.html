@@ -3,6 +3,12 @@
 
 <div class="customers-container">
 
+  @if (isLoading()) {
+  <div class="page-loading">
+    <div class="loading-spinner"></div>
+    <span>Loading customers...</span>
+  </div>
+  } @else {
   <div class="page-title-row">
     <div class="title-text">
       <h1>Customers</h1>
@@ -374,6 +380,7 @@
     </svg>
 
   </div>
+  }
 
 </div>
 

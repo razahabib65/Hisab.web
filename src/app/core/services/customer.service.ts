@@ -52,13 +52,14 @@ export class CustomerService {
   public readonly totalReceived = signal<number>(0);
   public readonly totalPayable = signal<number>(0);
 
+  public readonly isLoading = signal<boolean>(false);
 
   // =========================
   // GET ALL CUSTOMERS
   // =========================
 
   public loadCustomers(): void {
-
+    this.isLoading.set(true);
     this.http
       .get<CustomersResponse>(this.apiUrl)
       .subscribe({
@@ -125,6 +126,7 @@ export class CustomerService {
           this.customersState.set(
             mappedCustomers
           );
+          this.isLoading.set(false);
         },
 
         error: (error) => {
@@ -133,7 +135,7 @@ export class CustomerService {
             'Failed to load customers:',
             error
           );
-
+          this.isLoading.set(false);
         },
       });
   }

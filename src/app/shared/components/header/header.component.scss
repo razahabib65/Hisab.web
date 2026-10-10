@@ -2,7 +2,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  /* safe-area-inset-top pushes content below Android/iOS status bar */
+  padding: calc(6px + env(safe-area-inset-top)) 16px 6px;
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   /* Fixed so it never scrolls away */
@@ -12,7 +13,8 @@
   right: 0;
   z-index: 200;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-  height: 61px;
+  /* Height grows by the safe-area amount so pages below are offset correctly */
+  height: calc(56px + env(safe-area-inset-top));
   box-sizing: border-box;
 
   .header-left {

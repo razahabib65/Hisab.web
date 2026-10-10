@@ -2,13 +2,13 @@
   min-height: 100vh;
   background-color: #f2fbf6;
   width: 100%;
-  padding: 77px 16px 100px;
+  padding: calc(77px + env(safe-area-inset-top)) 16px 100px;
   box-sizing: border-box;
 
   @media (min-width: 769px) {
     margin-left: 220px;
     width: calc(100% - 220px);
-    padding: 89px 32px 40px 32px;
+    padding: calc(89px + env(safe-area-inset-top)) 32px 40px 32px;
   }
 
   @media (min-width: 1024px) {
@@ -19,6 +19,31 @@
 
   @media (min-width: 1440px) {
     padding: 101px 64px 40px 64px;
+  }
+
+  /* ── PAGE LOADING ── */
+  .page-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 12px;
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(4, 57, 39, 0.1);
+      border-top-color: #043927;
+      border-radius: 50%;
+      animation: pageSpin 0.8s linear infinite;
+    }
+
+    span {
+      font-size: 13px;
+      font-weight: 600;
+      color: #043927;
+    }
   }
 
   .content-grid {
@@ -562,4 +587,8 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+@keyframes pageSpin {
+  to { transform: rotate(360deg); }
 }

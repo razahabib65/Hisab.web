@@ -20,8 +20,8 @@ export class TransactionReportComponent implements OnInit {
   public readonly isLoading = this.reportService.isLoading;
   public readonly error = this.reportService.error;
 
-  public readonly fromDate = signal<string>(this.getTodayDateString());
-  public readonly toDate = signal<string>(this.getTodayDateString());
+  public readonly fromDate = signal<string>(this.getFirstDayOfPrevMonthString());
+  public readonly toDate   = signal<string>(this.getTodayDateString());
 
   public ngOnInit(): void {
     this.loadData();
@@ -37,9 +37,18 @@ export class TransactionReportComponent implements OnInit {
 
   private getTodayDateString(): string {
     const today = new Date();
-    const year = today.getFullYear();
+    const year  = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const day   = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private getFirstDayOfPrevMonthString(): string {
+    const today    = new Date();
+    // Day 0 of current month = last day of previous month
+    const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const year  = prevMonth.getFullYear();
+    const month = String(prevMonth.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}-01`;
   }
 }

@@ -2,13 +2,13 @@
   min-height: 100vh;
   background-color: #f2fbf6;
   width: 100%;
-  padding: 77px 16px 100px; /* Account for fixed header */
+  padding: calc(77px + env(safe-area-inset-top)) 16px 100px; /* Account for fixed header */
   box-sizing: border-box;
 
   @media (min-width: 769px) {
     margin-left: 220px;
     width: calc(100% - 220px);
-    padding: 89px 32px 40px 32px;
+    padding: calc(89px + env(safe-area-inset-top)) 32px 40px 32px;
   }
 
   @media (min-width: 1024px) {
@@ -72,6 +72,31 @@
         border-color: #fecdd3;
         color: #be123c;
       }
+    }
+  }
+
+  /* ── LOADING ── */
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    gap: 12px;
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(4, 57, 39, 0.1);
+      border-top-color: #043927;
+      border-radius: 50%;
+      animation: setSpin 0.8s linear infinite;
+    }
+
+    p {
+      font-size: 13px;
+      font-weight: 600;
+      color: #043927;
     }
   }
 
@@ -257,4 +282,8 @@
 
     &:hover { background: #fef2f2; border-color: #fca5a5; }
   }
+}
+
+@keyframes setSpin {
+  to { transform: rotate(360deg); }
 }

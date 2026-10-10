@@ -57,6 +57,13 @@ export class CustomersListComponent implements OnInit {
 
 
   // =====================================================
+  // LOADING STATE
+  // =====================================================
+
+  public readonly isLoading =
+    this.customerService.isLoading;
+
+  // =====================================================
   // SEARCH
   // =====================================================
 
